@@ -17,6 +17,8 @@ DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '#l2jhgy9&-*pp2)jn1re3ld^f##p-(1w!95g^j-q$ts(25i308')
 
+BASE_DIR = os.path.dirname(__file__)
+
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 settings.configure(
@@ -30,6 +32,16 @@ settings.configure(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ),
 )
+INSTALLED_APPS = (
+    'django.contrib.staticfiles',
+)
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+),
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+),
+STATIC_URL = '/static/',
 
 
 class ImageForm(forms.Form):
