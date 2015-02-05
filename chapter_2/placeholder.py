@@ -25,10 +25,16 @@ settings.configure(
 )
 
 
+def placeholder(request, width, height):
+    # TODO: Rest of the view will go here
+    return HttpResponse('Ok')
+
+
 def index(request):
     return HttpResponse('Hello World!')
 
 urlpatterns = (
+    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)/$', placeholder, name='placeholder'),
     url(r'^$', index),
 )
 
