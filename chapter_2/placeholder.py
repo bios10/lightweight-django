@@ -1,6 +1,9 @@
 import os
 import sys
 
+from io import BytesIO
+from PIL import Image, ImageDraw
+
 from django import forms
 from django.conf import settings
 from django.conf.urls import url
@@ -28,18 +31,31 @@ settings.configure(
 
 class ImageForm(forms.Form):
     """Form to validate requested placeholder image."""
-
     height = forms.IntegerField(min_value=1, max_value=2000)
     width = forms.IntegerField(min_value=1, max_value=2000)
 
+    def generate(self, image_format='PNG'):
+        """Generate an image of the given type and return as raw bytes."""
+        height = self.cleaned_data['height']
+        width = self.cleaned_data['width']
+        image = Image.new('RGB', (width, height))
+        draw = ImageDraw.Draw(image)
+        text = '{} x {}'.format(width, height)
+        text_width, text_height = draw.textsize(text)
+        if text_width < width and text_height < height:
+            text_top = (height - text_height) // 2
+            text_left = (width - text_width) // 2
+            draw.text((text_left, text_top), text, fill=(255, 255, 255))
+        content = BytesIO()
+        image.save(content, image_format)
+        content.seek(0)
+        return content
 
 def placeholder(request, width, height):
     form = ImageForm({'height': height, 'width': width})
     if form.is_valid():
-        height = form.cleaned_data['height']
-        width = form.cleaned_data['width']
-        # TODO: Generate image of requested size
-        return HttpResponse('Ok')
+        image = form.generate()
+        return HttpResponse(image, content_type='image/png')
     else:
         return HttpResponseBadRequest('Invalid Image Request')
 
