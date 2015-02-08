@@ -11,7 +11,7 @@ class Sprint(models.Model):
     end = models.DateField(unique=True)
 
     def __str__(self):
-        return self.name or _('Sprint ending {}').format(self.end)
+        return self.name or _('Sprint ending %s') % self.end
 
 class Task(models.Model):
     """Unit of work to be done for the sprint."""

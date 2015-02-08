@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 from .models import Task, Sprint
 
+
 User = get_user_model()
 
 
@@ -12,7 +13,8 @@ class NullFilter(django_filters.BooleanFilter):
 
     def filter(self, qs, value):
         if value is not None:
-            return qs.filter(**{'{}__isnull'.format(self.name): value})
+            return qs.filter(**{'%s__isnull' % self.name: value})
+        return qs
 
 
 class SprintFilter(django_filters.FilterSet):
@@ -31,7 +33,7 @@ class TaskFilter(django_filters.FilterSet):
 
     class Meta:
         model = Task
-        fields = ('sprints', 'status', 'assigned', 'backlog', )
+        fields = ('sprint', 'status', 'assigned', 'backlog', )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
